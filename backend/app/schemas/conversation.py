@@ -74,3 +74,7 @@ class ChatResponse(BaseModel):
     """Schema for chat response."""
     message: MessageResponse
     conversation_id: int
+    agent_type: Optional[str] = None
+    data: Optional[dict] = None
+    suggestions: list[str] = []
+    actions: list[dict] = []

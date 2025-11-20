@@ -168,6 +168,28 @@ export interface Message {
   created_at: string;
 }
 
+// Chat Request/Response Types
+export interface ChatRequest {
+  message: string;
+  trip_id?: number;
+  conversation_id?: number;
+}
+
+export interface ChatResponse {
+  message: Message;
+  conversation_id: number;
+  agent_type?: string;
+  data?: AgentData;
+  suggestions: string[];
+  actions: AgentAction[];
+}
+
+export interface AgentAction {
+  type: string;
+  label: string;
+  payload?: Record<string, unknown>;
+}
+
 // Agent Response Types
 export interface AgentResponse {
   message: string;

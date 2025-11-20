@@ -12,6 +12,9 @@ from app.agents.base import (
 )
 from app.agents.accommodation_agent import AccommodationAgent
 from app.agents.food_agent import FoodAgent
+from app.agents.transport_agent import TransportAgent
+from app.agents.itinerary_agent import ItineraryAgent
+from app.agents.budget_agent import BudgetAgent
 
 __all__ = [
     "BaseAgent",
@@ -20,4 +23,7 @@ __all__ = [
     "AgentMetrics",
     "AccommodationAgent",
     "FoodAgent",
+    "TransportAgent",
+    "ItineraryAgent",
+    "BudgetAgent",
 ]
