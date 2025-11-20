@@ -2,21 +2,27 @@
 
 import { TripActivity, TripAccommodation, TripRestaurant } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import dynamic from "next/dynamic";
+import type { MapMarker } from "@/components/map/LeafletMap";
+
+// Dynamically import map to avoid SSR issues
+const LeafletMap = dynamic(
+  () => import("@/components/map/LeafletMap").then((mod) => mod.LeafletMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] bg-muted rounded-lg flex items-center justify-center">
+        <p className="text-muted-foreground">Dang tai ban do...</p>
+      </div>
+    ),
+  }
+);
 
 interface TripMapProps {
   activities?: TripActivity[];
   accommodations?: TripAccommodation[];
   restaurants?: TripRestaurant[];
   destination: string;
-}
-
-interface MapMarker {
-  id: string;
-  name: string;
-  type: "activity" | "accommodation" | "restaurant";
-  latitude?: number;
-  longitude?: number;
-  address?: string;
 }
 
 export function TripMap({
@@ -27,30 +33,37 @@ export function TripMap({
 }: TripMapProps) {
   // Collect all markers
   const markers: MapMarker[] = [
-    ...activities.map((a) => ({
-      id: a.id,
-      name: a.name,
-      type: "activity" as const,
-      latitude: a.latitude,
-      longitude: a.longitude,
-      address: a.location,
-    })),
-    ...accommodations.map((a) => ({
-      id: a.id,
-      name: a.name,
-      type: "accommodation" as const,
-      latitude: a.latitude,
-      longitude: a.longitude,
-      address: a.address,
-    })),
-    ...restaurants.map((r) => ({
-      id: r.id,
-      name: r.name,
-      type: "restaurant" as const,
-      latitude: r.latitude,
-      longitude: r.longitude,
-      address: r.address,
-    })),
+    ...activities
+      .filter((a) => a.latitude && a.longitude)
+      .map((a) => ({
+        id: a.id,
+        name: a.name,
+        type: "activity" as const,
+        latitude: a.latitude!,
+        longitude: a.longitude!,
+        address: a.location,
+        description: a.description,
+      })),
+    ...accommodations
+      .filter((a) => a.latitude && a.longitude)
+      .map((a) => ({
+        id: a.id,
+        name: a.name,
+        type: "accommodation" as const,
+        latitude: a.latitude!,
+        longitude: a.longitude!,
+        address: a.address,
+      })),
+    ...restaurants
+      .filter((r) => r.latitude && r.longitude)
+      .map((r) => ({
+        id: r.id,
+        name: r.name,
+        type: "restaurant" as const,
+        latitude: r.latitude!,
+        longitude: r.longitude!,
+        address: r.address,
+      })),
   ];
 
   return (
@@ -59,16 +72,19 @@ export function TripMap({
         <CardTitle>Ban do - {destination}</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Map placeholder - can be replaced with real map component */}
-        <div className="aspect-video bg-muted rounded-lg mb-4 flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <MapIcon className="h-12 w-12 mx-auto mb-2" />
-            <p>Tich hop ban do Google Maps</p>
-            <p className="text-xs mt-1">
-              {markers.length} dia diem da duoc danh dau
-            </p>
+        {markers.length > 0 ? (
+          <LeafletMap markers={markers} height="500px" />
+        ) : (
+          <div className="aspect-video bg-muted rounded-lg mb-4 flex items-center justify-center">
+            <div className="text-center text-muted-foreground">
+              <MapIcon className="h-12 w-12 mx-auto mb-2" />
+              <p>Chua co dia diem nao</p>
+              <p className="text-xs mt-1">
+                Su dung tro ly AI de them dia diem vao hanh trinh
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Locations list */}
         {markers.length > 0 ? (
