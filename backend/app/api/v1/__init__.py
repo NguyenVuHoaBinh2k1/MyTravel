@@ -4,16 +4,16 @@ API v1 Router - Aggregates all API endpoints.
 
 from fastapi import APIRouter
 
+from app.api.v1.auth import router as auth_router
+from app.api.v1.trips import router as trips_router
+from app.api.v1.conversations import router as conversations_router
+
 router = APIRouter()
 
-# Import and include routers as they are created
-# from app.api.v1.auth import router as auth_router
-# from app.api.v1.trips import router as trips_router
-# from app.api.v1.conversations import router as conversations_router
-
-# router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
-# router.include_router(trips_router, prefix="/trips", tags=["Trips"])
-# router.include_router(conversations_router, prefix="/conversations", tags=["Conversations"])
+# Include routers
+router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+router.include_router(trips_router, prefix="/trips", tags=["Trips"])
+router.include_router(conversations_router, prefix="/conversations", tags=["Conversations"])
 
 
 @router.get("/")
