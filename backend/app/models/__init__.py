@@ -16,6 +16,7 @@ from app.models.trip import (
     TripStatus,
 )
 from app.models.conversation import Conversation, Message
+from app.models.agent_state import AgentState, AgentInteraction
 
 __all__ = [
     "User",
@@ -28,4 +29,6 @@ __all__ = [
     "TripStatus",
     "Conversation",
     "Message",
+    "AgentState",
+    "AgentInteraction",
 ]
